@@ -5,19 +5,47 @@ import Header from "./components/Header";
 import CreateTodo from "./components/CreateTodo/CreateTodo";
 import useCreateTodo from "./hooks/useCreateTodo";
 import ItemList from "./components/ItemsList";
+import DeleteConfirmationModal from "./components/DeleteModal";
+import deleteTodo from "./service/deleteTodo.service";
+import toast from "react-hot-toast";
 
 function App() {
-  const [users, setUsers] = useState([]);
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   type GroupedData = {
     [key in "Pending" | "Completed" | "Other"]: DataItem[];
   };
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState<string>("");
+  const [isUpdate, setIsUpdate] = useState(false);
 
-  const groupedData: GroupedData = users?.reduce(
+  const [updateId, setUpdateId] = useState();
+  const [updateData, setUpdatData] = useState();
+  const fetchUsers = async () => {
+    try {
+      const data = await getTodo({});
+      setData(data?.task);
+    } catch (err) {
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleDeleteOnConfirm = async () => {
+    try {
+      const res = await deleteTodo(deleteId);
+      toast.success("Successfully Delete");
+      setIsDeleteOpen(false);
+      fetchUsers();
+    } catch (error) {
+      toast.error("Something went worng.");
+    }
+  };
+  const groupedData: GroupedData = data?.reduce(
     (acc, item) => {
-      if (item.status === "Pending" || item.status === "Completed") {
-        acc[item.status].push(item);
+      if (item?.status === "Pending" || item?.status === "Completed") {
+        acc[item?.status].push(item);
       } else {
         acc.Other.push(item);
       }
@@ -26,51 +54,87 @@ function App() {
     { Pending: [], Completed: [], Other: [] }
   );
 
-  const { handleCloseModal, handleFormSubmit, handleOpenModal, modalOpen } =
-    useCreateTodo();
+  const {
+    handleCloseModal,
+    handleFormSubmit,
+    handleOpenModal,
+    modalOpen,
+    setModalOpen,
+    handleFormUpdate,
+  } = useCreateTodo({ fetchUsers });
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const data = await getTodo();
-        setUsers(data?.task);
-      } catch (err) {
-        console.log(err);
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchUsers();
   }, []);
-  console.log(users);
-  const list1 = [
-    { title: "Item 1", description: "Description 1", createTime: Date.now() },
-    { title: "Item 2", description: "Description 2", createTime: Date.now() },
-  ];
-
-  const list2 = [
-    { title: "Item A", description: "Description A", createTime: Date.now() },
-    { title: "Item B", description: "Description B", createTime: Date.now() },
-  ];
-
-  const list3 = [
-    { title: "Item X", description: "Description X", createTime: Date.now() },
-    { title: "Item Y", description: "Description Y", createTime: Date.now() },
-  ];
+  console.log(data);
   if (loading) return <p>Loading...</p>;
   return (
     <>
       <Header onClick={handleOpenModal} />
       <div className="flex flex-wrap p-4">
-        <ItemList items={groupedData.Other} title="Todo" />
-        <ItemList items={groupedData.Pending} title="Pending" />
-        <ItemList items={groupedData.Completed} title="completed" />
+        <ItemList
+          items={groupedData.Other}
+          title="Todo"
+          handleDelete={(id: string) => {
+            setDeleteId(id);
+            setIsDeleteOpen(true);
+          }}
+          handleUpdate={async (id) => {
+            setModalOpen(true);
+            setIsUpdate(true);
+            setUpdateId(id);
+            const res = await getTodo({ id });
+            setUpdatData(res);
+          }}
+        />
+        <ItemList
+          items={groupedData.Pending}
+          title="Pending"
+          handleDelete={(id: string) => {
+            setDeleteId(id);
+            setIsDeleteOpen(true);
+          }}
+          handleUpdate={async (id) => {
+            setModalOpen(true);
+            setIsUpdate(true);
+            setUpdateId(id);
+            const res = await getTodo({ id });
+            setUpdatData(res);
+          }}
+        />
+        <ItemList
+          items={groupedData.Completed}
+          title="Completed"
+          handleDelete={(id: string) => {
+            setDeleteId(id);
+            setIsDeleteOpen(true);
+          }}
+          handleUpdate={async (id) => {
+            setModalOpen(true);
+            setIsUpdate(true);
+            setUpdateId(id);
+            const res = await getTodo({ id });
+            setUpdatData(res);
+          }}
+        />
       </div>
       <CreateTodo
         open={modalOpen}
         onClose={handleCloseModal}
-        onSubmit={handleFormSubmit}
+        onSubmit={(data) => {
+          if (isUpdate) {
+            handleFormUpdate(data, updateId);
+          } else {
+            handleFormSubmit(data);
+          }
+        }}
+        isUpdate={isUpdate}
+        initialData={updateData}
+      />
+      <DeleteConfirmationModal
+        open={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)}
+        onConfirm={handleDeleteOnConfirm}
       />
     </>
   );

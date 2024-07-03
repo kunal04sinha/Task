@@ -15,23 +15,32 @@ import { Close as CloseIcon } from "@mui/icons-material";
 import { CreateTodoProps } from "./type";
 
 const statusOptions = [
-  { value: "active", label: "Active" },
-  { value: "inactive", label: "Inactive" },
+  { value: "Todo", label: "Todo" },
+  { value: "Pending", label: "Pending" },
+  { value: "Completed", label: "Completed" },
 ];
 
-const ModalForm = ({ open, onClose, onSubmit }: CreateTodoProps) => {
+const ModalForm = ({
+  open,
+  onClose,
+  onSubmit,
+  initialData,
+  isUpdate,
+}: CreateTodoProps) => {
   const { handleSubmit, control, reset } = useForm();
 
   useEffect(() => {
-    if (!open) {
+    if (open && initialData) {
+      reset(initialData);
+    } else if (!open) {
       reset();
     }
-  }, [open, reset]);
+  }, [open, initialData, reset]);
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>
-        Create Item
+        {isUpdate ? "Update Todo" : "Create Todo"}
         <IconButton
           aria-label="close"
           onClick={onClose}
@@ -107,7 +116,7 @@ const ModalForm = ({ open, onClose, onSubmit }: CreateTodoProps) => {
               Cancel
             </Button>
             <Button type="submit" color="primary" variant="contained">
-              Create
+              {isUpdate ? "Update" : "Create"}
             </Button>
           </DialogActions>
         </form>

@@ -1,8 +1,8 @@
 import api from "./config";
 
-const getTodo = async () => {
+const getTodo = async ({ id }: { id?: string }) => {
   try {
-    const response = await api.get("/tasks");
+    const response = await api.get(`/tasks${id ? `/${id}` : ""}`);
     return response.data;
   } catch (error: any) {
     if (error.code === "ECONNABORTED") {
