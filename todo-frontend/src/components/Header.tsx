@@ -1,11 +1,8 @@
-// src/components/Header.js
-import React from "react";
 import { format } from "date-fns";
 import { PlusIcon } from "@heroicons/react/24/solid";
 
 const Header = ({ onClick }: { onClick?: () => void }) => {
-  const todayDate = format(new Date(), "EEEE, dd MMM"); // e.g., "Wednesday, 03 Jul"
-
+  const todayDate = format(new Date(), "EEEE, dd MMM");
   return (
     <header className="flex justify-between items-center p-4 bg-gray-800 text-white rounded-3xl">
       <div className="text-2xl font-bold">{todayDate}</div>

@@ -12,7 +12,7 @@ const ItemList = ({ items, title, handleDelete, handleUpdate }: any) => {
       >
         {title}
       </Typography>
-      {items.map((item, index) => (
+      {items.map((item: any, index: number) => (
         <Card
           key={index}
           className="mb-4 p-4 bg-white shadow-lg rounded-lg hover:bg-gray-100 transition-colors duration-300"

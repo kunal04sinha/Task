@@ -1,5 +1,3 @@
-// src/components/DeleteConfirmationModal.js
-import React from "react";
 import {
   Dialog,
   DialogActions,

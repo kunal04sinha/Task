@@ -8,11 +8,17 @@ import ItemList from "./components/ItemsList";
 import DeleteConfirmationModal from "./components/DeleteModal";
 import deleteTodo from "./service/deleteTodo.service";
 import toast from "react-hot-toast";
-
+export interface DataItem {
+  id: string;
+  title: string;
+  description: string;
+  status: "Pending" | "Completed" | "Other";
+  createdAt: string;
+  updatedAt: string;
+}
 function App() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   type GroupedData = {
     [key in "Pending" | "Completed" | "Other"]: DataItem[];
   };
@@ -26,15 +32,14 @@ function App() {
     try {
       const data = await getTodo({});
       setData(data?.task);
-    } catch (err) {
-      setError(err);
+    } catch (err: any) {
     } finally {
       setLoading(false);
     }
   };
   const handleDeleteOnConfirm = async () => {
     try {
-      const res = await deleteTodo(deleteId);
+      await deleteTodo(deleteId);
       toast.success("Successfully Delete");
       setIsDeleteOpen(false);
       fetchUsers();
@@ -42,10 +47,13 @@ function App() {
       toast.error("Something went worng.");
     }
   };
-  const groupedData: GroupedData = data?.reduce(
-    (acc, item) => {
-      if (item?.status === "Pending" || item?.status === "Completed") {
-        acc[item?.status].push(item);
+
+  const groupedData: GroupedData = data.reduce<GroupedData>(
+    (acc, item: DataItem) => {
+      if (item?.status === "Pending") {
+        acc.Pending.push(item);
+      } else if (item?.status === "Completed") {
+        acc.Completed.push(item);
       } else {
         acc.Other.push(item);
       }
@@ -88,7 +96,7 @@ function App() {
             setDeleteId(id);
             setIsDeleteOpen(true);
           }}
-          handleUpdate={async (id) => {
+          handleUpdate={async (id: string) => {
             setModalOpen(true);
             setIsUpdate(true);
             setUpdateId(id);
@@ -103,7 +111,7 @@ function App() {
             setDeleteId(id);
             setIsDeleteOpen(true);
           }}
-          handleUpdate={async (id) => {
+          handleUpdate={async (id: string) => {
             setModalOpen(true);
             setIsUpdate(true);
             setUpdateId(id);
@@ -118,7 +126,7 @@ function App() {
             setDeleteId(id);
             setIsDeleteOpen(true);
           }}
-          handleUpdate={async (id) => {
+          handleUpdate={async (id: string) => {
             setModalOpen(true);
             setIsUpdate(true);
             setUpdateId(id);

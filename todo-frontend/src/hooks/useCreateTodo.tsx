@@ -3,7 +3,7 @@ import createTodo from "../service/createTodo.service";
 import toast from "react-hot-toast";
 import updateTodo from "../service/updateTodo.service";
 
-const useCreateTodo = ({ fetchUsers }) => {
+const useCreateTodo = ({ fetchUsers }: any) => {
   const [modalOpen, setModalOpen] = useState(false);
 
   const handleOpenModal = () => {
@@ -13,9 +13,9 @@ const useCreateTodo = ({ fetchUsers }) => {
   const handleCloseModal = () => {
     setModalOpen(false);
   };
-  const handleFormSubmit = async (data) => {
+  const handleFormSubmit = async (data: any) => {
     try {
-      const res = await createTodo(data);
+      await createTodo(data);
       toast.success("Successfully Created!");
       fetchUsers();
     } catch (error) {
@@ -23,9 +23,9 @@ const useCreateTodo = ({ fetchUsers }) => {
     }
     handleCloseModal();
   };
-  const handleFormUpdate = async (data, id) => {
+  const handleFormUpdate = async (data: any, id: string) => {
     try {
-      const res = await updateTodo(data, id);
+      await updateTodo(data, id);
       toast.success("Successfully Update!");
       fetchUsers();
     } catch (error) {
