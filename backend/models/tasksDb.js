@@ -7,7 +7,7 @@ const taskSchema = new Schema(
   {
     title: { type: String, required: true },
     description: { type: "string", required: true },
-    status: { type: "string", default: "Pending" },
+    status: { type: "string", default: "Todo" },
   },
   { timestamps: true }
 );

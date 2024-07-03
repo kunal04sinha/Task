@@ -28,14 +28,18 @@ const ModalForm = ({
   isUpdate,
 }: CreateTodoProps) => {
   const { handleSubmit, control, reset } = useForm();
-
+  console.log(initialData, isUpdate);
   useEffect(() => {
-    if (open && initialData) {
+    if (open && isUpdate && initialData) {
       reset(initialData);
-    } else if (!open) {
-      reset();
+    } else {
+      reset({
+        title: "",
+        description: "",
+        status: "",
+      });
     }
-  }, [open, initialData, reset]);
+  }, [open, initialData, reset, isUpdate]);
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>

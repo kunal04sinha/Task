@@ -20,8 +20,8 @@ function App() {
   const [deleteId, setDeleteId] = useState<string>("");
   const [isUpdate, setIsUpdate] = useState(false);
 
-  const [updateId, setUpdateId] = useState();
-  const [updateData, setUpdatData] = useState();
+  const [updateId, setUpdateId] = useState("");
+  const [updateData, setUpdatData] = useState({});
   const fetchUsers = async () => {
     try {
       const data = await getTodo({});
@@ -70,7 +70,16 @@ function App() {
   if (loading) return <p>Loading...</p>;
   return (
     <>
-      <Header onClick={handleOpenModal} />
+      <Header
+        onClick={() => {
+          setUpdateId("");
+
+          setIsUpdate(false);
+          setUpdatData({});
+
+          handleOpenModal();
+        }}
+      />
       <div className="flex flex-wrap p-4">
         <ItemList
           items={groupedData.Other}
