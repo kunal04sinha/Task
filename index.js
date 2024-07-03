@@ -3,6 +3,7 @@ import { APP_Port, DB_URL } from "./config";
 import router from "./Routes";
 import mongoose from "mongoose";
 const app = express();
+var cors = require("cors");
 
 mongoose.connect(DB_URL, {
   useNewUrlParser: true,
@@ -17,6 +18,7 @@ db.once("open", () => {
   console.log("Connected to database");
 });
 
+app.use(cors());
 app.use(express.json());
 app.use("/v1/api", router);
 app.listen(APP_Port, () => console.log(`Listing on port ${APP_Port}`));
