@@ -2,8 +2,11 @@ import express from "express";
 import { APP_Port, DB_URL } from "./config";
 import router from "./Routes";
 import mongoose from "mongoose";
+import cors from "cors";
+
 const app = express();
 
+app.use(cors());
 mongoose.connect(DB_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
